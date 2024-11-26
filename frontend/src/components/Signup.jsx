@@ -4,18 +4,30 @@ import { Heading, Subheading } from "./Headings";
 import { Button } from "./Button";
 import { Buttonfooter } from "./Buttonfooter";
 import { Card } from "./Card";
+import axios from "axios"
+import { useNavigate } from "react-router-dom";
+
 
 export function Signup() {
   const [formData, changeFormData] = useState({
     firstName: "",
     lastName: "",
-    email: "",
+    username: "",
     password: "",
   });
+  const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     console.log(event);
+    const response = await axios({
+      method: "POST",
+      url: "http://localhost:3000/api/v1/user/signup",
+      data: formData
+    })
+    console.log(response);
+    localStorage.setItem('authToken', response.data.token)
+    navigate("/dashboard")
   };
 
   return (
@@ -48,7 +60,7 @@ export function Signup() {
             props={{
               changeFormData: changeFormData,
               label: "Email",
-              key: "email",
+              key: "username",
               placeholder: "jhon@gmail.com",
             }}
             ></InputBox>

@@ -4,16 +4,34 @@ import { Heading, Subheading } from "./Headings";
 import { Button } from "./Button";
 import { Buttonfooter } from "./Buttonfooter";
 import { Card } from "./Card";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export function Singin() {
   const [formData, changeFormData] = useState({
-    email: "",
+    username: "",
     password: "",
   });
+  const [error, setError] = useState("");
+  const navigate = useNavigate()
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     console.log(event, formData);
+    const response = await axios
+      .post("http://localhost:3000/api/v1/user/signin", formData)
+      .catch((error) => {
+        console.log("🚀 ~ handleSubmit ~ error:", error);
+        if (error.response){
+          setError(error.response.data.message);
+        }
+      });
+    console.log("🚀 ~ handleSubmit ~ response:", response);
+    if (response.status) {
+      setError("")
+      localStorage.setItem("authToken", response.data.token);
+      navigate("/dashboard")
+    }
   };
 
   return (
@@ -30,7 +48,7 @@ export function Singin() {
               props={{
                 changeFormData: changeFormData,
                 label: "Email",
-                key: "email",
+                key: "username",
                 placeholder: "jhon@gmail.com",
               }}
             ></InputBox>
@@ -43,7 +61,8 @@ export function Singin() {
               }}
             ></InputBox>
             <div className="flex flex-col gap-1">
-              <Button title={"Sign in"} background={'primary'}></Button>
+              <div className="text-sm text-red-700 font-medium">{error}</div>
+              <Button title={"Sign in"} background={"primary"}></Button>
               <Buttonfooter
                 title={"Dont't have an account?"}
                 label={"Sign up"}

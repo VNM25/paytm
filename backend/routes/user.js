@@ -42,7 +42,9 @@ const updateSchema = z.object({
 });
 
 router.post("/signup", async (req, res) => {
+  console.log("🚀 ~ router.post ~ req.body:", req.body)
   const result = signupSchema.safeParse(req.body);
+  console.log("🚀 ~ router.post ~ result:", result)
   if (!result.success) {
     return res
       .status(400)
@@ -81,7 +83,7 @@ router.post("/signup", async (req, res) => {
 router.post("/signin", async (req, res) => {
   const result = signinSchema.safeParse(req.body);
   if (!result.success) {
-    return res.json({ message: "Invalid Request", ...result.error.issues });
+    return res.status(400).json({ message: "Invalid Request", ...result.error.issues });
   }
 
   const user = await users.findOne({

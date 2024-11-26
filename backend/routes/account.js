@@ -1,8 +1,14 @@
 const express = require("express");
 const { Account } = require("../db");
 const { default: mongoose } = require("mongoose");
+const { z } = require("zod");
 
 const router = express.Router();
+
+const balanceSchema = z.object({
+  to: z.string(),
+  amount: z.number()
+})
 
 router.get("/", (req, res) => {
   res.send("Hello from accounts!");
@@ -19,13 +25,17 @@ router.post("/transfer", async (req, res) => {
 
   session.startTransaction();
 
-  // console.log("🚀 ~ router.post ~ req:", req)
+  const valid = balanceSchema.safeParse(req.body)
+
+  if(!valid){
+    await session.abortTransaction();
+    return res.status(400).json({ message: "Incorrect body in request" });
+  }
+
   const { to, amount } = req.body;
-  console.log("🚀 ~ router.post ~ toUserId:", to, amount);
 
   const sender = await Account.findOne({ userId: req.userId });
   if (!sender || sender.balance < amount * 100) {
-    console.log("inside less balance");
 
     await session.abortTransaction();
     return res.status(400).json({ message: "Insufficient balance" });
@@ -36,7 +46,6 @@ router.post("/transfer", async (req, res) => {
     await session.abortTransaction();
     return res.status(400).json({ message: "Invalid Account" });
   }
-  console.log("accounts verified");
 
   await Account.updateOne(
     { userId: req.userId },
@@ -46,7 +55,6 @@ router.post("/transfer", async (req, res) => {
       },
     }
   ).session(session);
-  console.log("balance reduced");
 
   await Account.updateOne(
     { userId: to },
