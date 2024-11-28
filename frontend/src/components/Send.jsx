@@ -13,7 +13,6 @@ export function Send() {
   async function handleSubmit(e) {
     e.preventDefault();
     const recipientId = searchParams.get("id");
-    console.log("🚀 ~ handleSubmit ~ recipientId:", recipientId)
     const response = await axios.request({
       method: "post",
       maxBodyLength: Infinity,
@@ -28,7 +27,6 @@ export function Send() {
         amount
       },
     });
-    console.log("🚀 ~ handleSubmit ~ response:", response);
   }
   return (
     <div className="h-screen bg-slate-100 flex items-center justify-center">

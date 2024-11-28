@@ -21,12 +21,10 @@ export function Singin() {
     const response = await axios
       .post("http://localhost:3000/api/v1/user/signin", formData)
       .catch((error) => {
-        console.log("🚀 ~ handleSubmit ~ error:", error);
         if (error.response){
           setError(error.response.data.message);
         }
       });
-    console.log("🚀 ~ handleSubmit ~ response:", response);
     if (response.status) {
       setError("")
       localStorage.setItem("authToken", response.data.token);

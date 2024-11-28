@@ -42,9 +42,7 @@ const updateSchema = z.object({
 });
 
 router.post("/signup", async (req, res) => {
-  console.log("🚀 ~ router.post ~ req.body:", req.body)
   const result = signupSchema.safeParse(req.body);
-  console.log("🚀 ~ router.post ~ result:", result)
   if (!result.success) {
     return res
       .status(400)
@@ -103,7 +101,6 @@ router.post("/signin", async (req, res) => {
 router.put("/", authMiddleware, async (req, res) => {
   // console.log(req.body, req.userId);
   const valid = updateSchema.safeParse(req.body);
-  console.log("🚀 ~ router.put ~ valid:", valid.success);
   if (!valid.success) {
     res.status(411).json({
       message: "Error while updating information/ Invalid Values",
@@ -121,9 +118,7 @@ router.put("/", authMiddleware, async (req, res) => {
 });
 
 router.get("/bulk", authMiddleware, async (req, res) => {
-  console.log("🚀 ~ router.get ~ req:", req.query.filter)
   const filter = req.query.filter || "";
-  console.log("🚀 ~ router.get ~ filter:", filter)
   users
     .find({
       $or: [

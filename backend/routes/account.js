@@ -15,7 +15,6 @@ router.get("/", (req, res) => {
 });
 
 router.get("/balance", async (req, res) => {
-  console.log("🚀 ~ router.get ~ req:", req.userId);
   const accountDetail = await Account.findOne({ userId: req.userId });
   res.status(201).json({ balance: (accountDetail.balance / 100).toFixed(2) });
 });
